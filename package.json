@@ -1,0 +1,31 @@
+{
+  "name": "thenextgame",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "prisma generate &&next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@prisma/client": "^6.1.0",
+    "bcryptjs": "^2.4.3",
+    "disqus-react": "^1.1.5",
+    "next": "15.1.2",
+    "next-auth": "^5.0.0-beta.25",
+    "prop-types": "^15.8.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "swiper": "^11.1.15"
+  },
+  "devDependencies": {
+    "postcss": "^8",
+    "prisma": "^6.1.0",
+    "tailwindcss": "^3.4.1"
+  }
+}
