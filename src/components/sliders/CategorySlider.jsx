@@ -1,6 +1,6 @@
 "use client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
+import { Navigation, Scrollbar, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -51,8 +51,8 @@ export default function CategorySlider({ categories }) {
           "--swiper-navigation-sides-offset": "30px",
         }}
       >
-        {categories.map((item, i) => (
-          <SwiperSlide key={i} className="group">
+        {categories.map((item) => (
+          <SwiperSlide key={item.slug} className="group">
             <a href={`/category/${item.slug}`} className="group">
               <div className="overflow-hidden rounded-lg border-accent-secondary border mb-2">
                 <Image

@@ -6,6 +6,23 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 export default function HeroSlider() {
+  const slides = [
+    {
+      title: "PLAY RETRO GAMES FOR FREE",
+      description: "Relive the classics! Dive into our collection of retro games and enjoy them for free.",
+      linkText: "Play Mario",
+      linkHref: "#",
+      image: "/slide/slide-1.png"
+    },
+    {
+      title: "Khulekani Siyanda Mpungose",
+      description: "Relive the classics! Dive into our collection of retro games and enjoy them for free.",
+      linkText: "Play Mario",
+      linkHref: "#",
+      image: "/slide/slide-2.png"
+    },
+  ];
+
   return (
     <div>
       <Swiper
@@ -27,51 +44,22 @@ export default function HeroSlider() {
           "--swiper-navigation-sides-offset": "30px",
         }}
       >
-        <SwiperSlide
-          className="bg-[url('/slide/slide-1.png')] bg-no-repeat bg-right px-16 md:p-20 items-center"
-          style={{ display: "flex" }}
-        >
-          <div className="max-w-3xl">
-            <div className="text-accent text-sm mb-2 uppercase">
-              Free Arcade Games
+        {slides.map((slide, index) => (
+          <SwiperSlide key={index} className="flex bg-no-repeat bg-right p-20" style={{ backgroundImage: `url(${slide.image})` }}>
+            <div className="max-w-3xl">
+              <div className="text-accent text-sm mb-2 uppercase">{slide.title}</div>
+              <h1 className="font-display text-2xl md:text-4xl lg:text-6xl mb-4">{slide.title}</h1>
+              <p className="mb-6 max-w-[418px]">{slide.description}</p>
+              <a
+                href={slide.linkHref}
+                className="text-sm bg-accent-gradient py-3 px-6 rounded-xl border border-yellow-400 uppercase"
+                aria-label={slide.linkText}
+              >
+                {slide.linkText}
+              </a>
             </div>
-            <h1 className="font-display text-2xl md:text-4xl lg:text-6xl mb-4">
-              PLAY RETRO GAMES FOR FREE
-            </h1>
-            <p className="mb-6 max-w-[418px]">
-              Relive the classics! Dive into our collection of retro games and
-              enjoy them for free. Start playing now!
-            </p>
-            <a
-              href="#"
-              className="text-sm bg-accent-gradient py-3 px-6 rounded-xl border border-yellow-400 uppercase"
-            >
-              Play Mario
-            </a>
-          </div>
-        </SwiperSlide>
-
-        <SwiperSlide
-          className="bg-[url('/slide/slide-1.png')] bg-no-repeat bg-right p-20 items-center"
-          style={{ display: "flex" }}
-        >
-          <div className="max-w-3xl">
-            <div className="text-accent text-sm mb-2 uppercase">
-              Free Arcade Games
-            </div>
-            <h1 className="font-display text-4xl lg:text-6xl mb-4">Khulekani Siyanda Mpungose</h1>
-            <p className="mb-6 max-w-[418px]">
-              Relive the classics! Dive into our collection of retro games and
-              enjoy them for free. Start playing now!
-            </p>
-            <a
-              href="#"
-              className="text-sm bg-accent-gradient py-3 px-6 rounded-xl border border-yellow-400 uppercase"
-            >
-              Play Mario
-            </a>
-          </div>
-        </SwiperSlide>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
