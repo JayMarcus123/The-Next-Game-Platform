@@ -1,5 +1,5 @@
-import HeroSlider from "@/components/Sliders/HeroSlider";
-import CategorySlider from "@/components/Sliders/CategorySlider";
+import HeroSlider from "@/components/sliders/HeroSlider";
+import CategorySlider from "@/components/sliders/CategorySlider";
 import GameCategory from "@/components/GameCategory";
 import { getGameCategories, getGamesByCategoryId, getGamesBySelectedCategories } from "@/lib/gameQueries";
 
