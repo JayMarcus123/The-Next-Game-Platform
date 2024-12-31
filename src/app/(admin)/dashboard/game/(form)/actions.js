@@ -31,11 +31,13 @@ export async function createGame(prevState, formData) {
       published,
     };
 
+    // Check if thumbnailFile exists and upload it
     if (thumbnailFile && thumbnailFile instanceof File && thumbnailFile.name && thumbnailFile.size > 0) {
       const thumbnailPath = await uploadToSupabase(thumbnailFile, "thumbnails");
       gameData.image = thumbnailPath;
     }
 
+    // Check if gameFile exists and upload it
     if (gameFile && gameFile instanceof File && gameFile.name && gameFile.size > 0) {
       const gamePath = await uploadToSupabase(gameFile, "games");
       gameData.game_url = gamePath;
@@ -47,7 +49,7 @@ export async function createGame(prevState, formData) {
         data: gameData,
       });
 
-      revalidatePath("/");
+      revalidatePath("/"); // Optionally, revalidate cache if needed
       redirect("/dashboard"); // Redirect to the dashboard
       return {
         status: "success",
@@ -60,7 +62,7 @@ export async function createGame(prevState, formData) {
       });
 
       if (existingGame) {
-        revalidatePath("/");
+        revalidatePath("/"); // Optionally, revalidate cache if needed
         return {
           status: "error",
           message: "Slug already exists. Please choose a different slug.",
@@ -70,7 +72,7 @@ export async function createGame(prevState, formData) {
 
       await prisma.game.create({ data: gameData });
 
-      revalidatePath("/");
+      revalidatePath("/"); // Optionally, revalidate cache if needed
       redirect("/dashboard"); // Redirect to the dashboard
       return {
         status: "success",
@@ -79,7 +81,7 @@ export async function createGame(prevState, formData) {
       };
     }
   } catch (error) {
-    revalidatePath("/");
+    revalidatePath("/"); // Optionally, revalidate cache if needed
     return {
       status: "error",
       message: error.message,
@@ -106,4 +108,5 @@ async function uploadToSupabase(file, folder) {
     throw new Error("Failed to upload file.");
   }
 }
+
 

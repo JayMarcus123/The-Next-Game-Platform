@@ -1,9 +1,10 @@
-"use client"
-import { useFormState, useFormStatus } from "react-dom";
-import { createGame, deleteFormAction } from "@/app/(admin)/dashboard/game/(form)/actions"
+"use client";
+import { useFormState } from "react-dom";
+import { useFormStatus } from "react-dom";
+import { createGame, deleteFormAction } from "@/app/(admin)/dashboard/game/(form)/actions"; // Ensure these are correct imports
 import { PhotoIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
 
-const initialState = { message: null }
+const initialState = { message: null };
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -12,10 +13,11 @@ function SubmitButton() {
         <button
             type="submit"
             aria-disabled={pending}
-            className="w-full text-white bg-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+            className="w-full text-white bg-yellow-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        >
             {pending ? "Saving..." : "Save"}
         </button>
-    )
+    );
 }
 
 export default function GameForm({ categories, game }) {
@@ -24,19 +26,25 @@ export default function GameForm({ categories, game }) {
     return (
         <div>
             {state.message && (
-                <p className={`text-sm mb-4`} style={{ 'color': state.color }}>
+                <p className={`text-sm mb-4`} style={{ color: state.color }}>
                     {state.message} - Status: {state.status} - Color: {state.color}
                 </p>
             )}
 
             <form className="flex flex-col lg:flex-row gap-8" action={formAction}>
-
-                <input type="text" id="gameId" name="gameId" className="hidden" defaultValue={game?.id} />
+                <input
+                    type="text"
+                    id="gameId"
+                    name="gameId"
+                    className="hidden"
+                    defaultValue={game?.id}
+                />
 
                 <div className="lg:w-80">
-
                     {game?.image ? (
-                        <img src={`/game/${game?.image}`} alt={game?.title}
+                        <img
+                            src={`/game/${game?.image}`}
+                            alt={game?.title}
                             className="mb-4 rounded-md"
                         />
                     ) : (
@@ -44,14 +52,10 @@ export default function GameForm({ categories, game }) {
                     )}
 
                     <div className="mb-4">
-                        <p className="block mb-2 text-xs text-accent uppercase">
-                            Upload Thumbnail
-                        </p>
-
-                        <label htmlFor="thumbnailFile"
-                            className="flex flex-col items-center justify-center w-full h-40 border border-accent
-            border-dashed rounded-md cursor-pointer bg-black hover:bg-accent-secondary
-            "
+                        <p className="block mb-2 text-xs text-accent uppercase">Upload Thumbnail</p>
+                        <label
+                            htmlFor="thumbnailFile"
+                            className="flex flex-col items-center justify-center w-full h-40 border border-accent border-dashed rounded-md cursor-pointer bg-black hover:bg-accent-secondary"
                         >
                             <div className="flex flex-col items-center justify-center p-2">
                                 <PhotoIcon width={40} height={40} className="mb-4" />
@@ -70,18 +74,12 @@ export default function GameForm({ categories, game }) {
                         </label>
                     </div>
 
-
                     <div className="mb-4">
-                        <p className="block mb-2 text-xs text-accent uppercase">
-                            Upload Game
-                        </p>
-
+                        <p className="block mb-2 text-xs text-accent uppercase">Upload Game</p>
                         File: {game?.game_url}
-
-                        <label htmlFor="gameFile"
-                            className="flex flex-col items-center justify-center w-full h-40 border border-accent
-            border-dashed rounded-md cursor-pointer bg-black hover:bg-accent-secondary
-            "
+                        <label
+                            htmlFor="gameFile"
+                            className="flex flex-col items-center justify-center w-full h-40 border border-accent border-dashed rounded-md cursor-pointer bg-black hover:bg-accent-secondary"
                         >
                             <div className="flex flex-col items-center justify-center p-2">
                                 <ArchiveBoxIcon width={40} height={40} className="mb-4" />
@@ -111,8 +109,7 @@ export default function GameForm({ categories, game }) {
                             id="title"
                             name="title"
                             required
-                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600
-              block w-full p-2 mb-4"
+                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2 mb-4"
                             defaultValue={game?.title}
                         />
                     </div>
@@ -126,8 +123,7 @@ export default function GameForm({ categories, game }) {
                             id="slug"
                             name="slug"
                             required
-                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600
-              block w-full p-2 mb-4"
+                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2 mb-4"
                             defaultValue={game?.slug}
                         />
                     </div>
@@ -139,12 +135,10 @@ export default function GameForm({ categories, game }) {
                         <textarea
                             rows="3"
                             cols="50"
-                            type="text"
                             id="description"
                             name="description"
                             required
-                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600
-              block w-full p-2 mb-4"
+                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2 mb-4"
                             defaultValue={game?.description}
                         />
                     </div>
@@ -157,27 +151,20 @@ export default function GameForm({ categories, game }) {
                             id="category"
                             name="category"
                             required
-                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600
-              block w-full p-2 mb-4"
-                            defaultValue={game?.categories[0].id}
+                            className="bg-black border border-accent sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2 mb-4"
+                            defaultValue={game?.categories[0]?.id}
                         >
-
                             {categories?.map((category) => (
                                 <option key={category.id} value={category.id}>
-                                    {category?.id === game?.categories[0].id ? game?.categories[0].title : category?.title}
+                                    {category?.id === game?.categories[0]?.id ? game?.categories[0].title : category?.title}
                                 </option>
                             ))}
-
                         </select>
                     </div>
 
                     <div className="mb-4">
-                        <p className="block mb-2 text-xs text-accent uppercase">
-                            Published
-                        </p>
-
+                        <p className="block mb-2 text-xs text-accent uppercase">Published</p>
                         <div className="flex gap-4">
-
                             <div className="flex gap-2">
                                 <input type="radio" id="published" name="published" value="true" />
                                 <label htmlFor="published">Published</label>
@@ -189,19 +176,16 @@ export default function GameForm({ categories, game }) {
                             </div>
                         </div>
                         {game?.published ? 'This game was published' : 'This game is not published.'}
-
                     </div>
 
                     <SubmitButton />
                 </div>
-
             </form>
 
             <form action={deleteFormAction}>
                 <input type="hidden" name="gameId" value={game?.id} />
                 <button type="submit" className="bg-red-600 text-white p-2 rounded-lg text-sm">Delete Game</button>
             </form>
-
         </div>
-    )
+    );
 }

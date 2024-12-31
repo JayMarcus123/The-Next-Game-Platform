@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
-import { getGameCategories } from "@/lib/adminQueries"
-import GameForm from "@/app/(admin)/dashboard/game/(form)/form"
+import { getGameCategories } from "@/lib/gameQueries";
+import GameForm from "../(form)/form";
 
 export default async function Page() {
   const categories = await getGameCategories();
@@ -16,11 +16,7 @@ export default async function Page() {
         </div>
 
         <GameForm categories={categories} />
-
       </div>
-
-
-    
     </>
-  )
+  );
 }

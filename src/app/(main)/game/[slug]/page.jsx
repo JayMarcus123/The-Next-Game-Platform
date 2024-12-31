@@ -1,11 +1,8 @@
 import { getGameBySlug } from "@/lib/gameQueries";
 import GameEmulator from "@/components/GameEmulator";
-import Disqus from "@/components/Disqus";
-import { Suspense } from "react";
 
 export async function generateMetadata({ params }) {
-  // Ensure params are awaited
-  const { slug } = await params; // Await the params
+  const { slug } = params;
   const game = await getGameBySlug(slug);
   const title = game?.title + " - TheNextGamePlatform" || "TheNextGamePlatform Retro Game";
   const description = game?.description || "Discover the best free Retro Games";
@@ -17,9 +14,12 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Page({ params }) {
-  // Ensure params are awaited
-  const { slug } = await params; // Await the params
-  const game = await getGameBySlug(slug);
+  const { slug } = params; // Await the params if necessary
+  const game = await getGameBySlug(slug); // Fetch game details
+
+  if (!game) {
+    return <div>Game not found</div>; // Return a fallback UI if no game is found
+  }
 
   return (
     <div>
@@ -46,14 +46,25 @@ export default async function Page({ params }) {
       <GameEmulator game={game} />
 
       <div className="mt-8">
-        <Suspense fallback={<p>Loading game...</p>}>
-          <Disqus
-            url={`${process.env.NEXT_WEBSITE_URL}/game/${game?.slug}`}
-            identifier={game?.id}
-            title={game?.title}
-          />
-        </Suspense>
+        {/* Display Related Games */}
+        <h2 className="text-xl font-bold">Related Games</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          {/* Replace with actual related games */}
+          {game?.relatedGames?.map((relatedGame) => (
+            <div key={relatedGame.id} className="bg-white p-4 rounded-md shadow-md">
+              <h3 className="font-semibold">{relatedGame.title}</h3>
+              <p>{relatedGame.description}</p>
+              <a href={`/game/${relatedGame.slug}`} className="text-blue-500 mt-2 inline-block">Play Now</a>
+            </div>
+          ))}
+
+          {/* Fallback if no related games are available */}
+          {!game?.relatedGames?.length && (
+            <p>No related games available at the moment.</p>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
