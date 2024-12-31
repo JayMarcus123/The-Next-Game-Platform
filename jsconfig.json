@@ -2,14 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"] 
+      "@/*": ["src/*"]
     }
   },
   "include": [
     "src/**/*"
-  ],
-  "exclude": [
-    "src/components/Disqus.jsx"
   ]
 }
+
 
