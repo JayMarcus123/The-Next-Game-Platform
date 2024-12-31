@@ -1,4 +1,4 @@
-import Header from "@/components/Admin/Header"
+import Header from "@/components/Header";
 import { getAllGames, getGameCategories } from "@/lib/adminQueries"
 import Image from "next/image";
 

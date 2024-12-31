@@ -1,13 +1,17 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { createClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
 export async function createGame(prevState, formData) {
   try {
-    // Grab ID to update
     const id = formData.get("gameId");
     const title = formData.get("title");
     const slug = formData.get("slug");
@@ -24,44 +28,35 @@ export async function createGame(prevState, formData) {
       categories: {
         connect: { id: parseInt(categoryId, 10) },
       },
-      published
+      published,
     };
 
     if (thumbnailFile && thumbnailFile instanceof File && thumbnailFile.name && thumbnailFile.size > 0) {
-      console.log("Setting image to:" , thumbnailFile.name);
-      gameData.image = thumbnailFile.name
+      const thumbnailPath = await uploadToSupabase(thumbnailFile, "thumbnails");
+      gameData.image = thumbnailPath;
     }
 
     if (gameFile && gameFile instanceof File && gameFile.name && gameFile.size > 0) {
-      console.log("Setting file to:" , gameFile.name);
-      gameData.game_url = gameFile.name
+      const gamePath = await uploadToSupabase(gameFile, "games");
+      gameData.game_url = gamePath;
     }
 
-
     if (id) {
-      // update the game
       await prisma.game.update({
         where: { id: parseInt(id, 10) },
-        data: gameData
+        data: gameData,
       });
 
-      await uploadThumbnail(thumbnailFile);
-      await uploadGame(gameFile);
       revalidatePath("/");
-
+      redirect("/dashboard"); // Redirect to the dashboard
       return {
         status: "success",
         message: "Game has been updated.",
         color: "green",
       };
-
     } else {
-      // Check if slug already exist
       const existingGame = await prisma.game.findFirst({
-        where: {
-          slug: slug,
-          NOT: id ? { id: parseInt(id, 10) } : undefined,
-        },
+        where: { slug: slug },
       });
 
       if (existingGame) {
@@ -73,24 +68,16 @@ export async function createGame(prevState, formData) {
         };
       }
 
-      // Create new game
       await prisma.game.create({ data: gameData });
-      await uploadThumbnail(thumbnailFile);
-      await uploadGame(gameFile);
 
       revalidatePath("/");
+      redirect("/dashboard"); // Redirect to the dashboard
       return {
         status: "success",
         message: "Game has been added.",
         color: "green",
       };
     }
-
-    return {
-      status: "success",
-      message: "Game has been added.",
-      color: "green",
-    };
   } catch (error) {
     revalidatePath("/");
     return {
@@ -101,68 +88,22 @@ export async function createGame(prevState, formData) {
   }
 }
 
-
-async function uploadGame(gameFile) {
-  if (gameFile && gameFile instanceof File && gameFile.name && gameFile.size > 0) {
-    try {
-      const buffer = Buffer.from(await gameFile.arrayBuffer());
-      await uploadFileToS3(buffer, `rom/${gameFile.name}`)
-    } catch (error) {
-      console.log("Error uploading game:", error);
-    }
-  }
-}
-
-async function uploadThumbnail(thumbnailFile) {
-  if (thumbnailFile && thumbnailFile instanceof File && thumbnailFile.name && thumbnailFile.size > 0) {
-    try {
-      const buffer = Buffer.from(await thumbnailFile.arrayBuffer());
-      await uploadFileToS3(buffer, `thumbnail/${thumbnailFile.name}`)
-    } catch (error) {
-      console.log("Error uploading thumbnail:", error);
-    }
-  }
-}
-
-const s3Client = new S3Client({
-  region: process.env.NEXT_AWS_S3_REGION,
-  credentials: {
-    accessKeyId: process.env.NEXT_AWS_S3_KEY_ID,
-    secretAccessKey: process.env.NEXT_AWS_S3_SECRET_ACCESS_KEY
-  }
-})
-
-async function uploadFileToS3(file, filename) {
-  const params = {
-    Bucket: process.env.NEXT_AWS_S3_BUCKET_NAME,
-    Key: `${filename}`,
-    Body: file
-  }
-
-  const command = new PutObjectCommand(params);
+async function uploadToSupabase(file, folder) {
   try {
-    const response = await s3Client.send(command);
-    console.log("File uploaded successfully:", response);
-    return filename
+    const { data, error } = await supabase.storage
+      .from(folder)
+      .upload(`${folder}/${file.name}`, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    const { publicURL } = supabase.storage.from(folder).getPublicUrl(data.path);
+    return publicURL;
   } catch (error) {
-    throw error;
+    console.error("Error uploading file:", error);
+    throw new Error("Failed to upload file.");
   }
 }
 
-export async function deleteFormAction(formData) {
-  // delete logic here
-  if(!formData) {
-    throw new Error("No form data received.");
-  }
-
-  const id = formData.get("gameId");
-  if(!id) {
-    throw new Error("Game ID is missing.");
-  }
-
-  await prisma.game.delete({
-    where: { id: parseInt(id, 10) }
-  })
-
-  redirect("/dashboard");
-}

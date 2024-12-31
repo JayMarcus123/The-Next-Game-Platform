@@ -1,4 +1,4 @@
-import Header from "@/components/Admin/Header"
+import Header from "@/components/Header";
 import { getGameById, getGameCategories } from "@/lib/adminQueries";
 import GameForm from "@/app/(admin)/dashboard/game/(form)/form";
 
